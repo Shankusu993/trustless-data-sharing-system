@@ -179,7 +179,7 @@ function createOrgs() {
   if [ "$CRYPTO" == "Certificate Authorities" ]; then
     infoln "Generating certificates using Fabric CA"
 
-    IMAGE_TAG=${CA_IMAGETAG} docker-compose -f $COMPOSE_FILE_CA up -d 2>&1
+    IMAGE_TAG=${CA_IMAGETAG} docker compose -f $COMPOSE_FILE_CA up -d 2>&1
 
     . organizations/fabric-ca/registerEnroll.sh
 
@@ -277,7 +277,7 @@ function networkUp() {
     COMPOSE_FILES="${COMPOSE_FILES} -f ${COMPOSE_FILE_COUCH}"
   fi
 
-  IMAGE_TAG=$IMAGETAG docker-compose ${COMPOSE_FILES} up -d 2>&1
+  IMAGE_TAG=$IMAGETAG docker compose ${COMPOSE_FILES} up -d 2>&1
 
   docker ps -a
   if [ $? -ne 0 ]; then
@@ -316,8 +316,8 @@ function deployCC() {
 # Tear down running network
 function networkDown() {
   # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
-  docker-compose -f $COMPOSE_FILE_BASE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA down --volumes --remove-orphans
-  docker-compose -f $COMPOSE_FILE_COUCH_ORG3 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
+  docker compose -f $COMPOSE_FILE_BASE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA down --volumes --remove-orphans
+  docker compose -f $COMPOSE_FILE_COUCH_ORG3 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
   # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
     # Bring down the network, deleting the volumes
@@ -359,7 +359,7 @@ CC_END_POLICY="NA"
 CC_COLL_CONFIG="NA"
 # chaincode init function defaults to "NA"
 CC_INIT_FCN="NA"
-# use this as the default docker-compose yaml definition
+# use this as the default docker compose yaml definition
 COMPOSE_FILE_BASE=docker/docker-compose-test-net.yaml
 # docker-compose.yaml file if you are using couchdb
 COMPOSE_FILE_COUCH=docker/docker-compose-couch.yaml
@@ -367,7 +367,7 @@ COMPOSE_FILE_COUCH=docker/docker-compose-couch.yaml
 COMPOSE_FILE_CA=docker/docker-compose-ca.yaml
 # use this as the docker compose couch file for org3
 COMPOSE_FILE_COUCH_ORG3=addOrg3/docker/docker-compose-couch-org3.yaml
-# use this as the default docker-compose yaml definition for org3
+# use this as the default docker compose yaml definition for org3
 COMPOSE_FILE_ORG3=addOrg3/docker/docker-compose-org3.yaml
 #
 # chaincode language defaults to "NA"
