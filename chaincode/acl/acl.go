@@ -3,8 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
-	"time"
 	"github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -14,7 +12,7 @@ type ACL struct {
 	Identity       string    `json:"identity"`
 	Identifier     string    `json:"identifier"`
 	Qualifier      string    `json:"qualifier"`
-	Validity       time.Time `json:"validity"`
+	Validity       string `json:"validity"`
 	Importance     int       `json:"importance"`
 	MinBehavior    int       `json:"minBehavior"`
 	DisputeSafeguard int      `json:"disputeSafeguard"`
@@ -26,13 +24,13 @@ type AccessControlContract struct {
 }
 
 // AddACL adds an ACL entry by storing it on the blockchain
-func (ac *AccessControlContract) AddACL(ctx contractapi.TransactionContextInterface, Id, Identity, Identifier, Qualifier) error {
+func (ac *AccessControlContract) AddACL(ctx contractapi.TransactionContextInterface, Id, Identity, Identifier, Qualifier, Validity string) error {
 	acl := ACL{
 		Id:			Id,
 		Identity:	Identity,
 		Identifier:	Identifier,
 		Qualifier:	Qualifier,
-		Validity:	time.Now(), // UTC time
+		Validity:	Validity, // UTC time
 		Importance:	0,
 		MinBehavior:	0,
 		DisputeSafeguard:	0,
@@ -56,7 +54,6 @@ func (ac *AccessControlContract) UpdateACL(ctx contractapi.TransactionContextInt
 	}
 
 	acl.Qualifier = Qualifier
-	acl.Validity = time.Now()
 
 	aclAsBytes, _ = json.Marshal(acl)
 	return ctx.GetStub().PutState(Id, aclAsBytes)
